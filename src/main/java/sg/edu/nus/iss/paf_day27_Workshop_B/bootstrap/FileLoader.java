@@ -22,14 +22,14 @@ public class FileLoader {
     
     public void populateDatabase(String filePath, String collectionName) throws FileNotFoundException {
 
-        // drop the collection in mongodb
-        commentRepository.dropAndCreateNewCollection(collectionName);
-
         File file = new File(filePath);
 
         if (file == null || !file.exists() || !file.isFile()) {
             throw new FileNotFoundException();
         }
+
+        // drop the collection in mongodb
+        commentRepository.dropAndCreateNewCollection(collectionName);
 
         JsonReader jReader = Json.createReader(new FileReader(file));
         JsonArray jsonArray = jReader.readArray();

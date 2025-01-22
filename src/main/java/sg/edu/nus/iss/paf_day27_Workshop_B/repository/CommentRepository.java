@@ -4,6 +4,7 @@ import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.TextIndexDefinition;
 import org.springframework.stereotype.Repository;
 
 import jakarta.json.JsonObject;
@@ -29,7 +30,7 @@ public class CommentRepository {
         int gid = jsonComment.getInt("gid");
 
         Document toInsert = new Document();
-            toInsert.put("c_id", id);
+            toInsert.put("_id", id);
             toInsert.put("user", user);
             toInsert.put("rating", rating);
             toInsert.put("c_text", text);
@@ -37,5 +38,16 @@ public class CommentRepository {
 
         template.insert(toInsert, collectionName);
 
+    }
+
+
+    public void createTextIndex(String collectionName) {
+        TextIndexDefinition textIndexDefinition = new TextIndexDefinition.TextIndexDefinitionBuilder()
+            .onField("c_text")
+            .build();
+
+        template.indexOps(collectionName).ensureIndex(textIndexDefinition);
+
+        System.out.println("Text index created for c_text in collection " + collectionName);
     }
 }
